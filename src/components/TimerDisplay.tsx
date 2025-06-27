@@ -1,5 +1,5 @@
 import React from 'react';
-import { TimerStatus, Phase } from '../hooks/useTimer';
+import type { TimerStatus, Phase } from '../hooks/useTimer';
 
 interface TimerDisplayProps {
   status: TimerStatus;

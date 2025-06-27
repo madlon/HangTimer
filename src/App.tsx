@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { SessionSetup } from './components/SessionSetup';
 import { TimerDisplay } from './components/TimerDisplay';
-import { useTimer, TimerConfig } from './hooks/useTimer';
+import { useTimer, type TimerConfig } from './hooks/useTimer';
 import { useWakeLock } from './hooks/useWakeLock';
 
 // Default configuration matching your typical workout
@@ -78,7 +78,7 @@ function App() {
         )}
         
         {/* Wake Lock Status (for debugging) */}
-        {process.env.NODE_ENV === 'development' && (
+        {import.meta.env.DEV && (
           <div className="fixed bottom-4 right-4 bg-black bg-opacity-75 text-white text-xs p-2 rounded">
             Wake Lock: {wakeLockSupported ? (wakeLockActive ? 'Active' : 'Inactive') : 'Not Supported'}
           </div>

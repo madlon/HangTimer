@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TimerConfig } from '../hooks/useTimer';
+import type { TimerConfig } from '../hooks/useTimer';
 
 interface SessionSetupProps {
   onStart: (config: TimerConfig) => void;

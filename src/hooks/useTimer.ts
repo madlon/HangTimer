@@ -28,8 +28,8 @@ export const useTimer = (config: TimerConfig) => {
     progress: 0,
   });
 
-  const animationFrameRef = useRef<number>();
-  const startTimeRef = useRef<number>();
+  const animationFrameRef = useRef<number | undefined>();
+  const startTimeRef = useRef<number | undefined>();
   const pausedTimeRef = useRef<number>(0);
 
   // Calculate total session time
@@ -101,14 +101,14 @@ export const useTimer = (config: TimerConfig) => {
   }, [status.state, updateTimer]);
 
   const pause = useCallback(() => {
-    if (animationFrameRef.current) {
+    if (animationFrameRef.current !== undefined) {
       cancelAnimationFrame(animationFrameRef.current);
     }
     setStatus(prev => ({ ...prev, state: 'paused' }));
   }, []);
 
   const reset = useCallback(() => {
-    if (animationFrameRef.current) {
+    if (animationFrameRef.current !== undefined) {
       cancelAnimationFrame(animationFrameRef.current);
     }
     startTimeRef.current = undefined;
@@ -126,7 +126,7 @@ export const useTimer = (config: TimerConfig) => {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (animationFrameRef.current) {
+      if (animationFrameRef.current !== undefined) {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
