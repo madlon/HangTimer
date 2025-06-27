@@ -30,39 +30,37 @@ export const useTimer = (config: TimerConfig) => {
 
   const animationFrameRef = useRef<number | undefined>(undefined);
   const startTimeRef = useRef<number | undefined>(undefined);
-  const pausedTimeRef = useRef<number>(0);
+  const elapsedTimeRef = useRef<number>(0); // Track total elapsed time
+  const lastUpdateRef = useRef<number | undefined>(undefined);
 
   // Calculate total session time
   const totalSessionTime = config.totalSets * (config.hangDuration + config.restDuration) - config.restDuration;
 
   const updateTimer = useCallback(() => {
-    if (!startTimeRef.current) return;
+    if (!startTimeRef.current || !lastUpdateRef.current) return;
 
     const now = performance.now();
-    const elapsed = (now - startTimeRef.current - pausedTimeRef.current) / 1000;
+    const deltaTime = (now - lastUpdateRef.current) / 1000; // Convert to seconds
+    lastUpdateRef.current = now;
+    
+    // Update elapsed time
+    elapsedTimeRef.current += deltaTime;
     
     // Calculate which phase and set we're in
     const singleSetDuration = config.hangDuration + config.restDuration;
-    const totalElapsed = elapsed;
+    const totalElapsed = elapsedTimeRef.current;
     const currentSetIndex = Math.floor(totalElapsed / singleSetDuration);
     const timeInCurrentSet = totalElapsed % singleSetDuration;
     
     const currentSet = Math.min(currentSetIndex + 1, config.totalSets);
-    const isHangPhase = timeInCurrentSet < config.hangDuration;
-    const phase: Phase = isHangPhase ? 'hang' : 'rest';
+    const isLastSet = currentSet === config.totalSets;
     
+    // Determine phase
+    let phase: Phase;
     let timeRemaining: number;
-    if (isHangPhase) {
-      timeRemaining = config.hangDuration - timeInCurrentSet;
-    } else {
-      timeRemaining = config.restDuration - (timeInCurrentSet - config.hangDuration);
-    }
     
-    const totalTimeRemaining = totalSessionTime - totalElapsed;
-    const progress = Math.min(totalElapsed / totalSessionTime, 1);
-    
-    // Check if session is complete
-    if (currentSet > config.totalSets || totalElapsed >= totalSessionTime) {
+    if (isLastSet && timeInCurrentSet >= config.hangDuration) {
+      // Session complete
       setStatus({
         state: 'completed',
         phase: 'hang',
@@ -73,6 +71,17 @@ export const useTimer = (config: TimerConfig) => {
       });
       return;
     }
+    
+    if (timeInCurrentSet < config.hangDuration) {
+      phase = 'hang';
+      timeRemaining = config.hangDuration - timeInCurrentSet;
+    } else {
+      phase = 'rest';
+      timeRemaining = config.restDuration - (timeInCurrentSet - config.hangDuration);
+    }
+    
+    const totalTimeRemaining = totalSessionTime - totalElapsed;
+    const progress = Math.min(totalElapsed / totalSessionTime, 1);
     
     setStatus({
       state: 'running',
@@ -87,32 +96,33 @@ export const useTimer = (config: TimerConfig) => {
   }, [config, totalSessionTime]);
 
   const start = useCallback(() => {
-    if (status.state === 'idle') {
-      startTimeRef.current = performance.now();
-      pausedTimeRef.current = 0;
-    } else if (status.state === 'paused') {
-      const now = performance.now();
-      pausedTimeRef.current += now - (startTimeRef.current || now);
-      startTimeRef.current = now;
-    }
+    const now = performance.now();
+    startTimeRef.current = now;
+    lastUpdateRef.current = now;
     
     setStatus(prev => ({ ...prev, state: 'running' }));
     animationFrameRef.current = requestAnimationFrame(updateTimer);
-  }, [status.state, updateTimer]);
+  }, [updateTimer]);
 
   const pause = useCallback(() => {
     if (animationFrameRef.current !== undefined) {
       cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = undefined;
     }
+    startTimeRef.current = undefined;
+    lastUpdateRef.current = undefined;
     setStatus(prev => ({ ...prev, state: 'paused' }));
   }, []);
 
   const reset = useCallback(() => {
     if (animationFrameRef.current !== undefined) {
       cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = undefined;
     }
     startTimeRef.current = undefined;
-    pausedTimeRef.current = 0;
+    lastUpdateRef.current = undefined;
+    elapsedTimeRef.current = 0;
+    
     setStatus({
       state: 'idle',
       phase: 'hang',

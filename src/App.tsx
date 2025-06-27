@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { SessionSetup, TimerDisplay } from './components';
-import { useTimer, useWakeLock, type TimerConfig } from './hooks';
+import { useTimer, useWakeLock, useAudio, type TimerConfig } from './hooks';
 
 // Default configuration matching your typical workout
 const DEFAULT_CONFIG: TimerConfig = {
@@ -12,9 +12,13 @@ const DEFAULT_CONFIG: TimerConfig = {
 function App() {
   const [currentConfig, setCurrentConfig] = useState<TimerConfig>(DEFAULT_CONFIG);
   const [isSessionActive, setIsSessionActive] = useState(false);
+  const [audioEnabled, setAudioEnabled] = useState(true);
   
   const { status, start, pause, reset } = useTimer(currentConfig);
   const { isSupported: wakeLockSupported, isActive: wakeLockActive, requestWakeLock, releaseWakeLock } = useWakeLock();
+  const audio = useAudio({ enabled: audioEnabled, volume: 0.7 });
+  
+  const prevStatusRef = useRef(status);
 
   // Handle session start
   const handleStartSession = (config: TimerConfig) => {
@@ -26,6 +30,7 @@ function App() {
   // Handle session reset/end
   const handleResetSession = () => {
     reset();
+    audio.reset();
     setIsSessionActive(false);
     releaseWakeLock();
   };
@@ -44,12 +49,23 @@ function App() {
     // Keep wake lock active during pause in case user wants to resume quickly
   };
 
-  // Release wake lock when session completes
+  // Handle audio cues and session completion
   useEffect(() => {
-    if (status.state === 'completed') {
+    const prevStatus = prevStatusRef.current;
+    
+    // Handle audio cues during running state
+    if (status.state === 'running') {
+      audio.handleTimerUpdate(status.timeRemaining, status.phase, status.state);
+    }
+    
+    // Handle session completion
+    if (status.state === 'completed' && prevStatus.state !== 'completed') {
+      audio.handleSessionComplete();
       releaseWakeLock();
     }
-  }, [status.state, releaseWakeLock]);
+    
+    prevStatusRef.current = status;
+  }, [status, audio, releaseWakeLock]);
 
   // Cleanup wake lock on component unmount
   useEffect(() => {
@@ -64,11 +80,14 @@ function App() {
         {!isSessionActive ? (
           <SessionSetup
             defaultConfig={DEFAULT_CONFIG}
+            audioEnabled={audioEnabled}
+            onAudioToggle={setAudioEnabled}
             onStart={handleStartSession}
           />
         ) : (
           <TimerDisplay
             status={status}
+            totalSets={currentConfig.totalSets}
             onPause={handleTimerPause}
             onResume={handleTimerStart}
             onReset={handleResetSession}

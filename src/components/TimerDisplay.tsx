@@ -3,6 +3,7 @@ import type { TimerStatus, Phase } from '../hooks';
 
 interface TimerDisplayProps {
   status: TimerStatus;
+  totalSets: number;
   onPause: () => void;
   onResume: () => void;
   onReset: () => void;
@@ -10,6 +11,7 @@ interface TimerDisplayProps {
 
 export const TimerDisplay: React.FC<TimerDisplayProps> = ({
   status,
+  totalSets,
   onPause,
   onResume,
   onReset,
@@ -59,7 +61,7 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
         {/* Set Progress */}
         <div className="text-center">
           <div className="text-2xl font-bold text-gray-800 mb-2">
-            Set {status.currentSet} of 5
+            Set {status.currentSet} of {totalSets}
           </div>
           <div className="text-sm text-gray-600">
             Total time remaining: {formatTime(status.totalTimeRemaining)}

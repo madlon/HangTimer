@@ -4,9 +4,11 @@ import type { TimerConfig } from '../hooks';
 interface SessionSetupProps {
   onStart: (config: TimerConfig) => void;
   defaultConfig: TimerConfig;
+  audioEnabled: boolean;
+  onAudioToggle: (enabled: boolean) => void;
 }
 
-export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConfig }) => {
+export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConfig, audioEnabled, onAudioToggle }) => {
   const [config, setConfig] = useState<TimerConfig>(defaultConfig);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -105,6 +107,23 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
           <div className="flex justify-between text-xs text-gray-500" style={{ marginTop: '4px' }}>
             <span>1</span>
             <span>20</span>
+          </div>
+        </div>
+
+        {/* Audio Settings */}
+        <div className="form-group">
+          <label className="form-label">Audio Cues</label>
+          <div className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              id="audioEnabled"
+              checked={audioEnabled}
+              onChange={(e) => onAudioToggle(e.target.checked)}
+              style={{ width: '18px', height: '18px' }}
+            />
+            <label htmlFor="audioEnabled" className="text-sm text-gray-700">
+              Play audio cues during workout (gongs every 10s, 5s warning, phase changes)
+            </label>
           </div>
         </div>
 

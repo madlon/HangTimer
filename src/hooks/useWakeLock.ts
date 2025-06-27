@@ -4,6 +4,7 @@ export const useWakeLock = () => {
   const [isSupported, setIsSupported] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+  const retryTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     // Check if Wake Lock API is supported
@@ -27,19 +28,35 @@ export const useWakeLock = () => {
 
       // Listen for wake lock release
       wakeLockRef.current.addEventListener('release', () => {
+        console.log('Wake lock was released');
         setIsActive(false);
         wakeLockRef.current = null;
+        
+        // Auto-retry after a short delay if the document is still visible
+        if (document.visibilityState === 'visible') {
+          retryTimeoutRef.current = setTimeout(() => {
+            requestWakeLock();
+          }, 100);
+        }
       });
 
       console.log('Screen wake lock activated');
       return true;
     } catch (error) {
       console.error('Failed to request screen wake lock:', error);
+      setIsActive(false);
+      wakeLockRef.current = null;
       return false;
     }
   };
 
   const releaseWakeLock = async (): Promise<void> => {
+    // Clear any pending retry
+    if (retryTimeoutRef.current) {
+      clearTimeout(retryTimeoutRef.current);
+      retryTimeoutRef.current = null;
+    }
+
     if (wakeLockRef.current) {
       try {
         await wakeLockRef.current.release();
@@ -56,7 +73,11 @@ export const useWakeLock = () => {
   useEffect(() => {
     const handleVisibilityChange = async () => {
       if (document.visibilityState === 'visible' && isActive && !wakeLockRef.current) {
+        console.log('Document became visible, reacquiring wake lock');
         await requestWakeLock();
+      } else if (document.visibilityState === 'hidden') {
+        console.log('Document became hidden');
+        // Don't release wake lock when hidden - let it handle itself
       }
     };
 
@@ -66,9 +87,26 @@ export const useWakeLock = () => {
     };
   }, [isActive, isSupported]);
 
+  // Periodically check and reacquire wake lock if needed
+  useEffect(() => {
+    if (!isActive || !isSupported) return;
+
+    const checkInterval = setInterval(() => {
+      if (document.visibilityState === 'visible' && !wakeLockRef.current) {
+        console.log('Wake lock check: reacquiring lost wake lock');
+        requestWakeLock();
+      }
+    }, 5000); // Check every 5 seconds
+
+    return () => clearInterval(checkInterval);
+  }, [isActive, isSupported]);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
+      }
       if (wakeLockRef.current) {
         wakeLockRef.current.release();
       }
