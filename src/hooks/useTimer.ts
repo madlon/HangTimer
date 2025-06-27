@@ -28,8 +28,8 @@ export const useTimer = (config: TimerConfig) => {
     progress: 0,
   });
 
-  const animationFrameRef = useRef<number | undefined>();
-  const startTimeRef = useRef<number | undefined>();
+  const animationFrameRef = useRef<number | undefined>(undefined);
+  const startTimeRef = useRef<number | undefined>(undefined);
   const pausedTimeRef = useRef<number>(0);
 
   // Calculate total session time
