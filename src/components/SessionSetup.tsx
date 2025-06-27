@@ -30,7 +30,7 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
       
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Hang Duration */}
-        <div className="form-group">
+        <div className="form-group text-center">
           <label className="form-label text-center">Hang Duration</label>
           <div className="flex items-center justify-center space-x-4" style={{ margin: '0 auto', maxWidth: '280px' }}>
             <button
@@ -68,7 +68,7 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
         </div>
 
         {/* Rest Duration */}
-        <div className="form-group">
+        <div className="form-group text-center">
           <label className="form-label text-center">Rest Duration</label>
           <div className="flex items-center justify-center space-x-4" style={{ margin: '0 auto', maxWidth: '280px' }}>
             <button
@@ -106,7 +106,7 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
         </div>
 
         {/* Number of Sets */}
-        <div className="form-group">
+        <div className="form-group text-center">
           <label className="form-label text-center">Number of Sets</label>
           <div className="flex items-center justify-center space-x-4" style={{ margin: '0 auto', maxWidth: '280px' }}>
             <button
@@ -146,17 +146,22 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
         {/* Audio Settings */}
         <div className="form-group">
           <label className="form-label text-center">Audio Cues</label>
-          <div className="flex items-center justify-center space-x-3" style={{ margin: '0 auto', maxWidth: '280px' }}>
-            <input
-              type="checkbox"
-              id="audioEnabled"
-              checked={audioEnabled}
-              onChange={(e) => onAudioToggle(e.target.checked)}
-              style={{ width: '18px', height: '18px' }}
-            />
-            <label htmlFor="audioEnabled" className="text-sm text-gray-700 text-center">
-              Play audio cues during workout (gongs every 10s, 5s warning, phase changes)
-            </label>
+          <div className="text-center" style={{ margin: '0 auto', maxWidth: '280px' }}>
+            <div className="flex items-center justify-center space-x-3">
+              <input
+                type="checkbox"
+                id="audioEnabled"
+                checked={audioEnabled}
+                onChange={(e) => onAudioToggle(e.target.checked)}
+                style={{ width: '18px', height: '18px' }}
+              />
+              <label htmlFor="audioEnabled" className="text-sm text-gray-700">
+                Play audio cues during workout
+              </label>
+            </div>
+            <div className="text-xs text-gray-500" style={{ marginTop: '4px' }}>
+              (gongs every 10s, 5s warning, phase changes)
+            </div>
           </div>
         </div>
 
