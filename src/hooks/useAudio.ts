@@ -10,6 +10,9 @@ export const useAudio = (config: AudioCueConfig) => {
   const lastIntervalCueRef = useRef<number>(0);
   const lastPhaseRef = useRef<string>('');
   const lastTimeRemainingRef = useRef<number>(0);
+  
+  // Cache for loaded audio files
+  const audioBuffersRef = useRef<Map<string, AudioBuffer>>(new Map());
 
   // Initialize audio context on first use
   const getAudioContext = useCallback(() => {
@@ -19,26 +22,65 @@ export const useAudio = (config: AudioCueConfig) => {
     return audioContextRef.current;
   }, []);
 
-  // Create a pleasant gong-like sound
-  const playGong = useCallback(async (frequency: number = 432, duration: number = 0.5) => {
+  // Load audio file and cache it
+  const loadAudioFile = useCallback(async (filename: string): Promise<AudioBuffer | null> => {
+    if (audioBuffersRef.current.has(filename)) {
+      return audioBuffersRef.current.get(filename)!;
+    }
+
+    try {
+      const audioContext = getAudioContext();
+      const response = await fetch(`/sounds/${filename}`);
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+      
+      audioBuffersRef.current.set(filename, audioBuffer);
+      return audioBuffer;
+    } catch (error) {
+      console.warn(`Failed to load audio file: ${filename}`, error);
+      return null;
+    }
+  }, [getAudioContext]);
+
+  // Play audio from file or fallback to generated sound
+  const playSound = useCallback(async (filename?: string, fallbackFreq: number = 432, duration: number = 0.5) => {
     if (!config.enabled) return;
 
     try {
       const audioContext = getAudioContext();
       
-      // Resume audio context if it's suspended (required for user interaction)
+      // Resume audio context if suspended
       if (audioContext.state === 'suspended') {
         await audioContext.resume();
       }
 
+      // Try to play audio file first
+      if (filename) {
+        const audioBuffer = await loadAudioFile(filename);
+        if (audioBuffer) {
+          const source = audioContext.createBufferSource();
+          const gainNode = audioContext.createGain();
+          
+          source.buffer = audioBuffer;
+          gainNode.gain.setValueAtTime(config.volume, audioContext.currentTime);
+          
+          source.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+          
+          source.start(audioContext.currentTime);
+          return;
+        }
+      }
+
+      // Fallback to generated gong sound
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
       const filterNode = audioContext.createBiquadFilter();
 
       // Create a gong-like sound with frequency modulation
       oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-      oscillator.frequency.exponentialRampToValueAtTime(frequency * 0.5, audioContext.currentTime + duration);
+      oscillator.frequency.setValueAtTime(fallbackFreq, audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(fallbackFreq * 0.5, audioContext.currentTime + duration);
 
       // Add a low-pass filter for warmth
       filterNode.type = 'lowpass';
@@ -62,33 +104,41 @@ export const useAudio = (config: AudioCueConfig) => {
     } catch (error) {
       console.warn('Failed to play audio cue:', error);
     }
-  }, [config.enabled, config.volume, getAudioContext]);
+  }, [config.enabled, config.volume, getAudioContext, loadAudioFile]);
 
-  // Different sounds for different events
+  // Different sounds for different events - now with file support
   const playIntervalCue = useCallback(() => {
     console.log('🔔 Playing interval cue');
-    playGong(432, 0.3); // Higher, shorter sound for intervals
-  }, [playGong]);
+    playSound('interval.mp3', 432, 0.3); // Will try interval.mp3, fallback to generated sound
+  }, [playSound]);
 
   const playWarningCue = useCallback(() => {
     console.log('⚠️ Playing warning cue');
-    playGong(324, 0.5); // Lower, longer sound for warnings
-  }, [playGong]);
+    playSound('warning.mp3', 324, 0.5); // Will try warning.mp3, fallback to generated sound
+  }, [playSound]);
 
   const playPhaseChangeCue = useCallback(() => {
     console.log('🔄 Playing phase change cue');
-    // Double gong for phase changes
-    playGong(432, 0.4);
-    setTimeout(() => playGong(324, 0.4), 200);
-  }, [playGong]);
+    // Try custom sound, fallback to double gong
+    playSound('phase-change.mp3');
+    if (!audioBuffersRef.current.has('phase-change.mp3')) {
+      // Fallback: double gong
+      playSound(undefined, 432, 0.4);
+      setTimeout(() => playSound(undefined, 324, 0.4), 200);
+    }
+  }, [playSound]);
 
   const playCompletionCue = useCallback(() => {
     console.log('🎉 Playing completion cue');
-    // Triple ascending gong for completion
-    playGong(324, 0.4);
-    setTimeout(() => playGong(432, 0.4), 200);
-    setTimeout(() => playGong(540, 0.6), 400);
-  }, [playGong]);
+    // Try custom sound, fallback to triple ascending gong
+    playSound('completion.mp3');
+    if (!audioBuffersRef.current.has('completion.mp3')) {
+      // Fallback: triple ascending gong
+      playSound(undefined, 324, 0.4);
+      setTimeout(() => playSound(undefined, 432, 0.4), 200);
+      setTimeout(() => playSound(undefined, 540, 0.6), 400);
+    }
+  }, [playSound]);
 
   // Main function to handle timer audio cues
   const handleTimerUpdate = useCallback((

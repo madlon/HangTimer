@@ -32,10 +32,10 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
         {/* Hang Duration */}
         <div className="form-group">
           <label className="form-label">Hang Duration</label>
-          <div className="flex items-center justify-center space-x-3">
+          <div className="flex items-center justify-center space-x-4" style={{ margin: '0 auto', maxWidth: '280px' }}>
             <button
               type="button"
-              onClick={() => setConfig(prev => ({ ...prev, hangDuration: Math.max(15, prev.hangDuration - 5) }))}
+              onClick={() => setConfig(prev => ({ ...prev, hangDuration: Math.max(5, prev.hangDuration - 5) }))}
               className="btn-secondary"
               style={{ width: '48px', height: '48px', fontSize: '24px', padding: '0' }}
             >
@@ -55,7 +55,7 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
             </div>
             <button
               type="button"
-              onClick={() => setConfig(prev => ({ ...prev, hangDuration: Math.min(120, prev.hangDuration + 5) }))}
+              onClick={() => setConfig(prev => ({ ...prev, hangDuration: prev.hangDuration + 5 }))}
               className="btn-secondary"
               style={{ width: '48px', height: '48px', fontSize: '24px', padding: '0' }}
             >
@@ -63,17 +63,17 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
             </button>
           </div>
           <div className="text-center text-xs text-gray-500" style={{ marginTop: '4px' }}>
-            15s - 2m (5s steps)
+            5s steps
           </div>
         </div>
 
         {/* Rest Duration */}
         <div className="form-group">
           <label className="form-label">Rest Duration</label>
-          <div className="flex items-center justify-center space-x-3">
+          <div className="flex items-center justify-center space-x-4" style={{ margin: '0 auto', maxWidth: '280px' }}>
             <button
               type="button"
-              onClick={() => setConfig(prev => ({ ...prev, restDuration: Math.max(30, prev.restDuration - 5) }))}
+              onClick={() => setConfig(prev => ({ ...prev, restDuration: Math.max(5, prev.restDuration - 5) }))}
               className="btn-secondary"
               style={{ width: '48px', height: '48px', fontSize: '24px', padding: '0' }}
             >
@@ -93,7 +93,7 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
             </div>
             <button
               type="button"
-              onClick={() => setConfig(prev => ({ ...prev, restDuration: Math.min(300, prev.restDuration + 5) }))}
+              onClick={() => setConfig(prev => ({ ...prev, restDuration: prev.restDuration + 5 }))}
               className="btn-secondary"
               style={{ width: '48px', height: '48px', fontSize: '24px', padding: '0' }}
             >
@@ -101,14 +101,14 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
             </button>
           </div>
           <div className="text-center text-xs text-gray-500" style={{ marginTop: '4px' }}>
-            30s - 5m (5s steps)
+            5s steps
           </div>
         </div>
 
         {/* Number of Sets */}
         <div className="form-group">
           <label className="form-label">Number of Sets</label>
-          <div className="flex items-center justify-center space-x-3">
+          <div className="flex items-center justify-center space-x-4" style={{ margin: '0 auto', maxWidth: '280px' }}>
             <button
               type="button"
               onClick={() => setConfig(prev => ({ ...prev, totalSets: Math.max(1, prev.totalSets - 1) }))}
@@ -131,7 +131,7 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
             </div>
             <button
               type="button"
-              onClick={() => setConfig(prev => ({ ...prev, totalSets: Math.min(20, prev.totalSets + 1) }))}
+              onClick={() => setConfig(prev => ({ ...prev, totalSets: prev.totalSets + 1 }))}
               className="btn-secondary"
               style={{ width: '48px', height: '48px', fontSize: '24px', padding: '0' }}
             >
@@ -139,7 +139,7 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
             </button>
           </div>
           <div className="text-center text-xs text-gray-500" style={{ marginTop: '4px' }}>
-            1 - 20 sets
+            No limits
           </div>
         </div>
 
