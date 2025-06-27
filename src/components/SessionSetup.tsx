@@ -32,12 +32,12 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
         {/* Hang Duration */}
         <div className="form-group text-center">
           <label className="form-label text-center">Hang Duration</label>
-          <div className="flex items-center justify-center space-x-4" style={{ margin: '0 auto', maxWidth: '280px' }}>
+          <div className="flex items-center justify-center space-x-4" style={{ margin: '0 auto', maxWidth: '280px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <button
               type="button"
               onClick={() => setConfig(prev => ({ ...prev, hangDuration: Math.max(5, prev.hangDuration - 5) }))}
               className="btn-secondary"
-              style={{ width: '48px', height: '48px', fontSize: '24px', padding: '0' }}
+              style={{ width: '48px', height: '48px', fontSize: '24px', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               −
             </button>
@@ -48,7 +48,10 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
                 padding: '12px 16px', 
                 backgroundColor: '#f3f4f6', 
                 borderRadius: '8px',
-                border: '2px solid #e5e7eb'
+                border: '2px solid #e5e7eb',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
             >
               {formatTime(config.hangDuration)}
@@ -57,7 +60,7 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
               type="button"
               onClick={() => setConfig(prev => ({ ...prev, hangDuration: prev.hangDuration + 5 }))}
               className="btn-secondary"
-              style={{ width: '48px', height: '48px', fontSize: '24px', padding: '0' }}
+              style={{ width: '48px', height: '48px', fontSize: '24px', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               +
             </button>
@@ -70,12 +73,12 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
         {/* Rest Duration */}
         <div className="form-group text-center">
           <label className="form-label text-center">Rest Duration</label>
-          <div className="flex items-center justify-center space-x-4" style={{ margin: '0 auto', maxWidth: '280px' }}>
+          <div className="flex items-center justify-center space-x-4" style={{ margin: '0 auto', maxWidth: '280px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <button
               type="button"
               onClick={() => setConfig(prev => ({ ...prev, restDuration: Math.max(5, prev.restDuration - 5) }))}
               className="btn-secondary"
-              style={{ width: '48px', height: '48px', fontSize: '24px', padding: '0' }}
+              style={{ width: '48px', height: '48px', fontSize: '24px', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               −
             </button>
@@ -86,7 +89,10 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
                 padding: '12px 16px', 
                 backgroundColor: '#f3f4f6', 
                 borderRadius: '8px',
-                border: '2px solid #e5e7eb'
+                border: '2px solid #e5e7eb',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
             >
               {formatTime(config.restDuration)}
@@ -95,7 +101,7 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
               type="button"
               onClick={() => setConfig(prev => ({ ...prev, restDuration: prev.restDuration + 5 }))}
               className="btn-secondary"
-              style={{ width: '48px', height: '48px', fontSize: '24px', padding: '0' }}
+              style={{ width: '48px', height: '48px', fontSize: '24px', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               +
             </button>
@@ -108,12 +114,12 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
         {/* Number of Sets */}
         <div className="form-group text-center">
           <label className="form-label text-center">Number of Sets</label>
-          <div className="flex items-center justify-center space-x-4" style={{ margin: '0 auto', maxWidth: '280px' }}>
+          <div className="flex items-center justify-center space-x-4" style={{ margin: '0 auto', maxWidth: '280px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <button
               type="button"
               onClick={() => setConfig(prev => ({ ...prev, totalSets: Math.max(1, prev.totalSets - 1) }))}
               className="btn-secondary"
-              style={{ width: '48px', height: '48px', fontSize: '24px', padding: '0' }}
+              style={{ width: '48px', height: '48px', fontSize: '24px', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               −
             </button>
@@ -124,7 +130,10 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
                 padding: '12px 16px', 
                 backgroundColor: '#f3f4f6', 
                 borderRadius: '8px',
-                border: '2px solid #e5e7eb'
+                border: '2px solid #e5e7eb',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
             >
               {config.totalSets}
@@ -133,7 +142,7 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
               type="button"
               onClick={() => setConfig(prev => ({ ...prev, totalSets: prev.totalSets + 1 }))}
               className="btn-secondary"
-              style={{ width: '48px', height: '48px', fontSize: '24px', padding: '0' }}
+              style={{ width: '48px', height: '48px', fontSize: '24px', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               +
             </button>
