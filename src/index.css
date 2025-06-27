@@ -136,6 +136,11 @@ body {
   background-color: #f9fafb;
 }
 
+.phase-ready {
+  color: #f59e0b;
+  background-color: #fef3c7;
+}
+
 .phase-indicator {
   text-align: center;
   margin-bottom: 32px;

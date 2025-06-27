@@ -29,12 +29,14 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
   const getPhaseColor = (phase: Phase, state: string): string => {
     if (state === 'completed') return 'phase-completed';
     if (state === 'paused') return 'phase-paused';
+    if (phase === 'ready') return 'phase-ready';
     return phase === 'hang' ? 'phase-hang' : 'phase-rest';
   };
 
   const getPhaseText = (phase: Phase, state: string): string => {
     if (state === 'completed') return 'Completed!';
     if (state === 'paused') return 'Paused';
+    if (phase === 'ready') return 'GET READY...';
     return phase === 'hang' ? 'HANG TIME' : 'REST TIME';
   };
 

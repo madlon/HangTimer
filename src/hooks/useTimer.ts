@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-export type TimerState = 'idle' | 'running' | 'paused' | 'completed';
-export type Phase = 'hang' | 'rest';
+export type TimerState = 'idle' | 'ready' | 'running' | 'paused' | 'completed';
+export type Phase = 'ready' | 'hang' | 'rest';
 
 export interface TimerConfig {
   hangDuration: number; // in seconds
@@ -21,9 +21,9 @@ export interface TimerStatus {
 export const useTimer = (config: TimerConfig) => {
   const [status, setStatus] = useState<TimerStatus>({
     state: 'idle',
-    phase: 'hang',
+    phase: 'ready',
     currentSet: 1,
-    timeRemaining: config.hangDuration,
+    timeRemaining: 5, // 5-second intro countdown
     totalTimeRemaining: 0,
     progress: 0,
   });
@@ -46,11 +46,30 @@ export const useTimer = (config: TimerConfig) => {
     // Update elapsed time
     elapsedTimeRef.current += deltaTime;
     
+    const totalElapsed = elapsedTimeRef.current;
+    
+    // Handle ready phase (5-second countdown)
+    if (totalElapsed < 5) {
+      const readyTimeRemaining = 5 - totalElapsed;
+      setStatus({
+        state: 'ready',
+        phase: 'ready',
+        currentSet: 1,
+        timeRemaining: Math.max(0, readyTimeRemaining),
+        totalTimeRemaining: totalSessionTime + 5,
+        progress: 0,
+      });
+      animationFrameRef.current = requestAnimationFrame(updateTimer);
+      return;
+    }
+    
+    // Calculate workout time (subtract the 5-second ready period)
+    const workoutElapsed = totalElapsed - 5;
+    
     // Calculate which phase and set we're in
     const singleSetDuration = config.hangDuration + config.restDuration;
-    const totalElapsed = elapsedTimeRef.current;
-    const currentSetIndex = Math.floor(totalElapsed / singleSetDuration);
-    const timeInCurrentSet = totalElapsed % singleSetDuration;
+    const currentSetIndex = Math.floor(workoutElapsed / singleSetDuration);
+    const timeInCurrentSet = workoutElapsed % singleSetDuration;
     
     const currentSet = Math.min(currentSetIndex + 1, config.totalSets);
     const isLastSet = currentSet === config.totalSets;
@@ -80,8 +99,8 @@ export const useTimer = (config: TimerConfig) => {
       timeRemaining = config.restDuration - (timeInCurrentSet - config.hangDuration);
     }
     
-    const totalTimeRemaining = totalSessionTime - totalElapsed;
-    const progress = Math.min(totalElapsed / totalSessionTime, 1);
+    const totalTimeRemaining = totalSessionTime - workoutElapsed;
+    const progress = Math.min(workoutElapsed / totalSessionTime, 1);
     
     setStatus({
       state: 'running',
@@ -125,10 +144,10 @@ export const useTimer = (config: TimerConfig) => {
     
     setStatus({
       state: 'idle',
-      phase: 'hang',
+      phase: 'ready',
       currentSet: 1,
-      timeRemaining: config.hangDuration,
-      totalTimeRemaining: totalSessionTime,
+      timeRemaining: 5, // 5-second intro countdown
+      totalTimeRemaining: totalSessionTime + 5,
       progress: 0,
     });
   }, [config.hangDuration, totalSessionTime]);
@@ -147,10 +166,10 @@ export const useTimer = (config: TimerConfig) => {
     if (status.state === 'idle') {
       setStatus({
         state: 'idle',
-        phase: 'hang',
+        phase: 'ready',
         currentSet: 1,
-        timeRemaining: config.hangDuration,
-        totalTimeRemaining: totalSessionTime,
+        timeRemaining: 5, // 5-second intro countdown
+        totalTimeRemaining: totalSessionTime + 5,
         progress: 0,
       });
     }

@@ -143,19 +143,29 @@ export const useAudio = (config: AudioCueConfig) => {
   // Main function to handle timer audio cues
   const handleTimerUpdate = useCallback((
     timeRemaining: number,
-    phase: 'hang' | 'rest',
-    state: 'idle' | 'running' | 'paused' | 'completed'
+    phase: 'ready' | 'hang' | 'rest',
+    state: 'idle' | 'ready' | 'running' | 'paused' | 'completed'
   ) => {
-    if (!config.enabled || state !== 'running') return;
+    if (!config.enabled || (state !== 'running' && state !== 'ready')) return;
 
     const currentSeconds = Math.floor(timeRemaining);
     const phaseKey = `${phase}`;
     const lastTime = lastTimeRemainingRef.current;
 
+    // Handle ready phase countdown (5, 4, 3, 2, 1)
+    if (phase === 'ready' && currentSeconds <= 5 && currentSeconds > 0 && lastTime > currentSeconds) {
+      console.log(`🔢 Ready countdown: ${currentSeconds}`);
+      playIntervalCue(); // Simple beep for countdown
+      lastTimeRemainingRef.current = timeRemaining;
+      return;
+    }
+
     // Phase change detection - reset interval tracking on phase change
     if (lastPhaseRef.current !== '' && lastPhaseRef.current !== phaseKey) {
       console.log(`🔄 Phase changed: ${lastPhaseRef.current} → ${phaseKey}`);
-      playPhaseChangeCue();
+      if (phaseKey !== 'ready') { // Don't play phase change for ready phase
+        playPhaseChangeCue();
+      }
       lastIntervalCueRef.current = 0; // Reset interval tracking for new phase
     }
     lastPhaseRef.current = phaseKey;
