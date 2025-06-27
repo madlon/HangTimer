@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
-import { SessionSetup } from './components/SessionSetup';
-import { TimerDisplay } from './components/TimerDisplay';
-import { useTimer, type TimerConfig } from './hooks/useTimer';
-import { useWakeLock } from './hooks/useWakeLock';
+import { SessionSetup, TimerDisplay } from './components';
+import { useTimer, useWakeLock, type TimerConfig } from './hooks';
 
 // Default configuration matching your typical workout
 const DEFAULT_CONFIG: TimerConfig = {
@@ -61,8 +59,8 @@ function App() {
   }, [releaseWakeLock]);
 
   return (
-    <div className="min-h-screen bg-gray-100 py-4">
-      <div className="container mx-auto px-4">
+    <div style={{ minHeight: '100vh', padding: '16px 0' }}>
+      <div className="container">
         {!isSessionActive ? (
           <SessionSetup
             defaultConfig={DEFAULT_CONFIG}
@@ -79,7 +77,7 @@ function App() {
         
         {/* Wake Lock Status (for debugging) */}
         {import.meta.env.DEV && (
-          <div className="fixed bottom-4 right-4 bg-black bg-opacity-75 text-white text-xs p-2 rounded">
+          <div className="debug-info">
             Wake Lock: {wakeLockSupported ? (wakeLockActive ? 'Active' : 'Inactive') : 'Not Supported'}
           </div>
         )}

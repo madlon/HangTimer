@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { TimerConfig } from '../hooks/useTimer';
+import type { TimerConfig } from '../hooks';
 
 interface SessionSetupProps {
   onStart: (config: TimerConfig) => void;
@@ -21,15 +21,15 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg">
+    <div className="card">
       <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
         Dead Hang Timer
       </h2>
       
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Hang Duration */}
-        <div>
-          <label htmlFor="hangDuration" className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="form-group">
+          <label htmlFor="hangDuration" className="form-label">
             Hang Duration
           </label>
           <div className="flex items-center space-x-3">
@@ -41,21 +41,22 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
               step="5"
               value={config.hangDuration}
               onChange={(e) => setConfig(prev => ({ ...prev, hangDuration: Number(e.target.value) }))}
-              className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              className="form-slider"
+              style={{ flex: 1 }}
             />
-            <span className="text-sm font-medium text-gray-600 w-16">
+            <span className="text-sm font-medium text-gray-600" style={{ width: '64px' }}>
               {formatTime(config.hangDuration)}
             </span>
           </div>
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
+          <div className="flex justify-between text-xs text-gray-500" style={{ marginTop: '4px' }}>
             <span>15s</span>
             <span>2m</span>
           </div>
         </div>
 
         {/* Rest Duration */}
-        <div>
-          <label htmlFor="restDuration" className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="form-group">
+          <label htmlFor="restDuration" className="form-label">
             Rest Duration
           </label>
           <div className="flex items-center space-x-3">
@@ -67,21 +68,22 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
               step="15"
               value={config.restDuration}
               onChange={(e) => setConfig(prev => ({ ...prev, restDuration: Number(e.target.value) }))}
-              className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              className="form-slider"
+              style={{ flex: 1 }}
             />
-            <span className="text-sm font-medium text-gray-600 w-16">
+            <span className="text-sm font-medium text-gray-600" style={{ width: '64px' }}>
               {formatTime(config.restDuration)}
             </span>
           </div>
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
+          <div className="flex justify-between text-xs text-gray-500" style={{ marginTop: '4px' }}>
             <span>30s</span>
             <span>5m</span>
           </div>
         </div>
 
         {/* Number of Sets */}
-        <div>
-          <label htmlFor="totalSets" className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="form-group">
+          <label htmlFor="totalSets" className="form-label">
             Number of Sets
           </label>
           <div className="flex items-center space-x-3">
@@ -93,26 +95,27 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
               step="1"
               value={config.totalSets}
               onChange={(e) => setConfig(prev => ({ ...prev, totalSets: Number(e.target.value) }))}
-              className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              className="form-slider"
+              style={{ flex: 1 }}
             />
-            <span className="text-sm font-medium text-gray-600 w-8">
+            <span className="text-sm font-medium text-gray-600" style={{ width: '32px' }}>
               {config.totalSets}
             </span>
           </div>
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
+          <div className="flex justify-between text-xs text-gray-500" style={{ marginTop: '4px' }}>
             <span>1</span>
             <span>20</span>
           </div>
         </div>
 
         {/* Session Summary */}
-        <div className="bg-blue-50 p-4 rounded-lg">
+        <div className="bg-blue-50" style={{ padding: '16px', borderRadius: '8px' }}>
           <h3 className="text-sm font-medium text-blue-800 mb-2">Session Summary</h3>
-          <div className="space-y-1 text-sm text-blue-700">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }} className="text-sm text-blue-700">
             <div>Sets: {config.totalSets}</div>
             <div>Hang: {formatTime(config.hangDuration)} × {config.totalSets}</div>
             <div>Rest: {formatTime(config.restDuration)} × {config.totalSets - 1}</div>
-            <div className="font-medium border-t border-blue-200 pt-2 mt-2">
+            <div className="font-medium" style={{ borderTop: '1px solid #bfdbfe', paddingTop: '8px', marginTop: '8px' }}>
               Total Time: {formatTime(
                 config.totalSets * config.hangDuration + 
                 (config.totalSets - 1) * config.restDuration
@@ -124,7 +127,8 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
         {/* Start Button */}
         <button
           type="submit"
-          className="w-full btn-primary text-lg py-4"
+          className="w-full btn-primary text-lg"
+          style={{ padding: '16px' }}
         >
           Start Workout
         </button>

@@ -1,5 +1,5 @@
 import React from 'react';
-import type { TimerStatus, Phase } from '../hooks/useTimer';
+import type { TimerStatus, Phase } from '../hooks';
 
 interface TimerDisplayProps {
   status: TimerStatus;
@@ -21,9 +21,9 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
   };
 
   const getPhaseColor = (phase: Phase, state: string): string => {
-    if (state === 'completed') return 'text-green-600 bg-green-50';
-    if (state === 'paused') return 'text-gray-600 bg-gray-50';
-    return phase === 'hang' ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50';
+    if (state === 'completed') return 'phase-completed';
+    if (state === 'paused') return 'phase-paused';
+    return phase === 'hang' ? 'phase-hang' : 'phase-rest';
   };
 
   const getPhaseText = (phase: Phase, state: string): string => {
@@ -32,15 +32,11 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
     return phase === 'hang' ? 'HANG TIME' : 'REST TIME';
   };
 
-  const getTimerSize = (): string => {
-    // Larger text for main countdown
-    return 'text-8xl md:text-9xl font-mono font-bold';
-  };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg min-h-screen flex flex-col justify-center">
+    <div className="card" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
       {/* Phase Indicator */}
-      <div className={`text-center mb-8 p-4 rounded-lg ${getPhaseColor(status.phase, status.state)}`}>
+      <div className={`phase-indicator ${getPhaseColor(status.phase, status.state)}`}>
         <h2 className="text-xl font-bold">
           {getPhaseText(status.phase, status.state)}
         </h2>
@@ -48,11 +44,11 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
 
       {/* Main Timer Display */}
       <div className="text-center mb-8">
-        <div className={`${getTimerSize()} leading-none ${getPhaseColor(status.phase, status.state)}`}>
+        <div className={`timer-large ${getPhaseColor(status.phase, status.state)}`}>
           {formatTime(status.timeRemaining)}
         </div>
         {status.timeRemaining <= 10 && status.state === 'running' && (
-          <div className="text-lg text-orange-600 font-semibold mt-2 animate-pulse">
+          <div className="text-lg text-orange-600 font-semibold animate-pulse" style={{ marginTop: '8px' }}>
             {Math.ceil(status.timeRemaining)} seconds remaining
           </div>
         )}
@@ -71,9 +67,9 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full bg-gray-200 rounded-full h-3">
+        <div className="progress-bar">
           <div
-            className="bg-blue-600 h-3 rounded-full transition-all duration-300 ease-out"
+            className="progress-fill"
             style={{ width: `${status.progress * 100}%` }}
           />
         </div>
@@ -87,7 +83,8 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
         {status.state === 'completed' ? (
           <button
             onClick={onReset}
-            className="w-full btn-primary text-xl py-4"
+            className="w-full btn-primary text-xl"
+            style={{ padding: '16px' }}
           >
             Start New Session
           </button>
@@ -96,14 +93,16 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
             {status.state === 'running' ? (
               <button
                 onClick={onPause}
-                className="w-full btn-secondary text-xl py-4"
+                className="w-full btn-secondary text-xl"
+                style={{ padding: '16px' }}
               >
                 Pause
               </button>
             ) : (
               <button
                 onClick={onResume}
-                className="w-full btn-primary text-xl py-4"
+                className="w-full btn-primary text-xl"
+                style={{ padding: '16px' }}
               >
                 {status.state === 'paused' ? 'Resume' : 'Start'}
               </button>
@@ -111,7 +110,8 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
             
             <button
               onClick={onReset}
-              className="w-full btn-secondary text-lg py-3"
+              className="w-full btn-secondary text-lg"
+              style={{ padding: '12px' }}
             >
               Reset Session
             </button>
@@ -120,7 +120,7 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
       </div>
 
       {/* Wake Lock Status */}
-      <div className="mt-4 text-center text-xs text-gray-500">
+      <div style={{ marginTop: '16px' }} className="text-center text-xs text-gray-500">
         Screen will stay awake during workout
       </div>
     </div>
