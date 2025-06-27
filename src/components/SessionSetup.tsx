@@ -31,7 +31,7 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Hang Duration */}
         <div className="form-group">
-          <label className="form-label">Hang Duration</label>
+          <label className="form-label text-center">Hang Duration</label>
           <div className="flex items-center justify-center space-x-4" style={{ margin: '0 auto', maxWidth: '280px' }}>
             <button
               type="button"
@@ -69,7 +69,7 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
 
         {/* Rest Duration */}
         <div className="form-group">
-          <label className="form-label">Rest Duration</label>
+          <label className="form-label text-center">Rest Duration</label>
           <div className="flex items-center justify-center space-x-4" style={{ margin: '0 auto', maxWidth: '280px' }}>
             <button
               type="button"
@@ -107,7 +107,7 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
 
         {/* Number of Sets */}
         <div className="form-group">
-          <label className="form-label">Number of Sets</label>
+          <label className="form-label text-center">Number of Sets</label>
           <div className="flex items-center justify-center space-x-4" style={{ margin: '0 auto', maxWidth: '280px' }}>
             <button
               type="button"
@@ -145,8 +145,8 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
 
         {/* Audio Settings */}
         <div className="form-group">
-          <label className="form-label">Audio Cues</label>
-          <div className="flex items-center space-x-3">
+          <label className="form-label text-center">Audio Cues</label>
+          <div className="flex items-center justify-center space-x-3" style={{ margin: '0 auto', maxWidth: '280px' }}>
             <input
               type="checkbox"
               id="audioEnabled"
@@ -154,7 +154,7 @@ export const SessionSetup: React.FC<SessionSetupProps> = ({ onStart, defaultConf
               onChange={(e) => onAudioToggle(e.target.checked)}
               style={{ width: '18px', height: '18px' }}
             />
-            <label htmlFor="audioEnabled" className="text-sm text-gray-700">
+            <label htmlFor="audioEnabled" className="text-sm text-gray-700 text-center">
               Play audio cues during workout (gongs every 10s, 5s warning, phase changes)
             </label>
           </div>
