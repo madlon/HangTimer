@@ -4,6 +4,8 @@ import type { TimerStatus, Phase } from '../hooks';
 interface TimerDisplayProps {
   status: TimerStatus;
   totalSets: number;
+  audioEnabled: boolean;
+  onAudioToggle: (enabled: boolean) => void;
   onPause: () => void;
   onResume: () => void;
   onReset: () => void;
@@ -12,6 +14,8 @@ interface TimerDisplayProps {
 export const TimerDisplay: React.FC<TimerDisplayProps> = ({
   status,
   totalSets,
+  audioEnabled,
+  onAudioToggle,
   onPause,
   onResume,
   onReset,
@@ -36,7 +40,32 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
 
 
   return (
-    <div className="card" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+    <div className="card" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative' }}>
+      {/* Audio Toggle Button */}
+      <button
+        onClick={() => onAudioToggle(!audioEnabled)}
+        style={{
+          position: 'absolute',
+          top: '16px',
+          right: '16px',
+          width: '48px',
+          height: '48px',
+          borderRadius: '50%',
+          border: 'none',
+          backgroundColor: audioEnabled ? '#2563eb' : '#e5e7eb',
+          color: audioEnabled ? 'white' : '#6b7280',
+          fontSize: '20px',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'all 0.2s'
+        }}
+        title={audioEnabled ? 'Disable audio cues' : 'Enable audio cues'}
+      >
+        {audioEnabled ? '🔊' : '🔇'}
+      </button>
+
       {/* Phase Indicator */}
       <div className={`phase-indicator ${getPhaseColor(status.phase, status.state)}`}>
         <h2 className="text-xl font-bold">
@@ -49,11 +78,6 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
         <div className={`timer-large ${getPhaseColor(status.phase, status.state)}`}>
           {formatTime(status.timeRemaining)}
         </div>
-        {status.timeRemaining <= 10 && status.state === 'running' && (
-          <div className="text-lg text-orange-600 font-semibold animate-pulse" style={{ marginTop: '8px' }}>
-            {Math.ceil(status.timeRemaining)} seconds remaining
-          </div>
-        )}
       </div>
 
       {/* Progress Information */}

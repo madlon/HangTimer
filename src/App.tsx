@@ -88,6 +88,8 @@ function App() {
           <TimerDisplay
             status={status}
             totalSets={currentConfig.totalSets}
+            audioEnabled={audioEnabled}
+            onAudioToggle={setAudioEnabled}
             onPause={handleTimerPause}
             onResume={handleTimerStart}
             onReset={handleResetSession}
